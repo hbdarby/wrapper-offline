@@ -1,0 +1,10 @@
+<footer>
+	<nav id="foot-left">
+		<a>v<%= it.env.WRAPPER_VER %></a>
+		<a href="/settings">Settings</a>
+		<a href="https://github.com/octanuary/wrapper-offline/wiki">FAQ</a>
+		<a href="https://discord.gg/NeUcnmWPWj">Discord</a>
+	</nav>
+
+	<nav id="foot-right"></nav>
+</footer>
