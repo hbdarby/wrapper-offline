@@ -97,9 +97,7 @@ module.exports = function processVoice(voiceName, text) {
 									const json = JSON.parse(body);
 
 									https
-										.get(`https://www.cepstral.com${json.mp3_loc}`, (r) => {
-
-										})
+										.get(`https://www.cepstral.com${json.mp3_loc}`, res)
 										.on("error", rej);
 								});
 								r.on("error", rej);
