@@ -15,12 +15,22 @@ const voices = require("../data/voices.json").voices;
  * @param {string} text text
  * @returns {IncomingMessage}
  */
-module.exports = function processVoice(voiceName, text) {
+module.exports = function processVoice(voiceName, rawText) {
 	return new Promise(async (res, rej) => {
 		const voice = voices[voiceName];
-
 		if (!voice) {
 			rej("That voice doesn't seem to exist.");
+		}
+
+		let flags = {};
+		const pieces = rawText.split("#%");
+		let text = pieces.pop();
+		for (const rawFlag of pieces) {
+			const index = rawFlag.indexOf("=");
+			if (index == -1) continue;
+			const name = rawFlag.substring(0, index);
+			const value = rawFlag.substring(index + 1);
+			flags[name] = value;
 		}
 
 		try {
@@ -73,6 +83,11 @@ module.exports = function processVoice(voiceName, text) {
 					break;
 				}
 				case "cepstral": {
+					let pitch = flags.pitch !== undefined ? +flags.pitch : 50;
+					pitch /= 100;
+					pitch *= 4.6;
+					pitch -= 0.4;
+					pitch = Math.round(pitch * 10) / 10;
 					https.get("https://www.cepstral.com/en/demos", async (r) => {
 						const cookie = r.headers["set-cookie"];
 						const q = new URLSearchParams({
@@ -80,7 +95,7 @@ module.exports = function processVoice(voiceName, text) {
 							voice: voice.arg,
 							createTime: 666,
 							rate: 170,
-							pitch: 1,
+							pitch: pitch,
 							sfx: "none"
 						}).toString();
 
